@@ -602,6 +602,120 @@ def profile(request):
 {% endblock %}
 
 
+
+
+
+
+
+
+
+Для добавления футера на сайт и его стилизации с использованием Bootstrap выполните следующие шаги:
+
+
+---
+
+1. Обновление базового шаблона
+
+Добавьте футер в base.html:
+
+Файл: templates/shop/base.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Книжный магазин{% endblock %}</title>
+    <!-- Подключение Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'book_list' %}">Книжный магазин</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <!-- Футер -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-1">© 2024 Книжный магазин. Все права защищены.</p>
+            <p class="mb-0">Свяжитесь с нами: <a href="mailto:support@bookstore.com" class="text-white">support@bookstore.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+---
+
+2. Стилизация футера с Bootstrap
+
+Мы используем стандартные классы Bootstrap для футера:
+
+bg-dark: Задает темный фон.
+
+text-white: Белый цвет текста.
+
+py-4: Верхний и нижний отступы (padding).
+
+text-center: Центрирование текста.
+
+
+
+---
+
+3. Пример футера на сайте
+
+Теперь ваш футер будет отображаться на каждой странице сайта и выглядеть современно благодаря использованию стилей Bootstrap.
+
+Если хотите добавить дополнительные ссылки в футер, например, социальные сети:
+
+<div class="d-flex justify-content-center mt-3">
+    <a href="https://facebook.com" class="text-white me-3">Facebook</a>
+    <a href="https://twitter.com" class="text-white me-3">Twitter</a>
+    <a href="https://instagram.com" class="text-white">Instagram</a>
+</div>
+
+
+---
+
+Футер будет всегда внизу страницы и подойдет для всех экранов благодаря адаптивности Bootstrap.
+
+
+
+
+
+
+
+
+
+
+
+
 ---
 
 3. Проверка дизайна
