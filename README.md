@@ -724,3 +724,157 @@ text-center: Центрирование текста.
 
 
 
+
+
+
+
+
+
+Чтобы добавить поиск по книгам в ваш Django-проект, выполните следующие шаги:
+
+
+---
+
+1. Обновление представления
+
+Добавьте обработку поисковых запросов в представление списка книг.
+
+Файл: views.py
+
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Book
+
+def book_list(request):
+    query = request.GET.get('q')  # Получаем значение из поля поиска
+    if query:
+        books = Book.objects.filter(
+            Q(title__icontains=query) | 
+            Q(author__icontains=query) | 
+            Q(publisher__icontains=query)
+        )
+    else:
+        books = Book.objects.all()
+
+    return render(request, 'shop/book_list.html', {'books': books, 'query': query})
+
+
+---
+
+2. Обновление маршрутов
+
+Убедитесь, что маршрут для списка книг (book_list) настроен.
+
+Файл: urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.book_list, name='book_list'),
+]
+
+
+---
+
+3. Обновление шаблона
+
+Добавьте форму поиска в шаблон списка книг.
+
+Файл: templates/shop/book_list.html
+
+{% extends 'shop/base.html' %}
+
+{% block title %}Список книг{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Книги</h1>
+
+<!-- Форма поиска -->
+<form method="get" class="d-flex mb-4">
+    <input 
+        type="text" 
+        name="q" 
+        value="{{ query|default:'' }}" 
+        class="form-control me-2" 
+        placeholder="Введите название, автора или издательство">
+    <button type="submit" class="btn btn-outline-primary">Поиск</button>
+</form>
+
+<div class="row">
+    {% if books %}
+        {% for book in books %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        <p class="card-text">
+                            Автор: {{ book.author }}<br>
+                            Издательство: {{ book.publisher }}<br>
+                            Год издания: {{ book.publication_year }}<br>
+                            Цена: {{ book.price }} руб.<br>
+                            Количество: {{ book.stock }}
+                        </p>
+                        {% if book.stock > 0 %}
+                            <a href="{% url 'order_book' book.id %}" class="btn btn-primary">Заказать</a>
+                        {% else %}
+                            <a href="{% url 'request_book' %}" class="btn btn-warning">Запросить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">Книги по вашему запросу не найдены.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+---
+
+4. Пример использования
+
+Теперь вы можете использовать строку запроса q для поиска книг. Например:
+
+Перейдите на главную страницу / и введите запрос в поле поиска.
+
+Результаты будут отфильтрованы по названию, автору или издательству.
+
+
+
+---
+
+5. Пример поиска в интерфейсе
+
+1. Форма поиска:
+
+Поле ввода позволяет вводить текст для поиска.
+
+Кнопка отправляет запрос.
+
+
+
+2. Отображение результатов:
+
+Если книги найдены, они отображаются в карточках.
+
+Если ничего не найдено, выводится сообщение "Книги по вашему запросу не найдены."
+
+
+
+
+Теперь ваш магазин поддерживает поиск!
+
+
+
+
+
+
+
+
+
+
+
+
+
